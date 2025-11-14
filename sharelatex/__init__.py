@@ -452,7 +452,7 @@ class OverleafCookieAuthenticator(DefaultAuthenticator):
     ) -> Tuple[Mapping[str, Any], Mapping[str, Any]]:
         """
         Authenticate throw session cookie.
-        Pass the content of 'sharelatex.sid' cookie as password
+        Pass the content of 'overleaf.sid' cookie as password
         parameter in SyncClient constructor
         """
         self.login_url = urllib.parse.urljoin(base_url, login_path)
@@ -601,6 +601,7 @@ AUTH_DICT = {
     "gitlab": OverleafGitlabAuthenticator,
     "overleaf_gitlab": OverleafGitlabAuthenticator,  # backward compat
     "community": CommunityAuthenticator,
+    "cookie": OverleafCookieAuthenticator,
 }
 
 
