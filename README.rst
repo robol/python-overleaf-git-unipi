@@ -27,7 +27,9 @@ Installation
     # Development version
     git clone https://gitlab.inria.fr/sed-rennes/sharelatex/python-sharelatex
     cd python-sharelatex
-    pip install [-e] .
+    pip install .
+
+See at the end of this page for local installation for developpement purposes.
 
 Compatibility notes
 -------------------
@@ -132,3 +134,39 @@ Create a remote project from a local git
 .. code:: bash
 
    git slatex new [OPTIONS] PROJECTNAME BASE_URL
+
+
+To collaborate on this project
+------------------------------
+
+.. code-block:: console
+    :caption: Install everything for local developpement of this package
+
+    $ # Pull the most up-to-date version of the code
+    $ git clone https://gitlab.inria.fr/sed-rennes/sharelatex/python-sharelatex
+    Fetching [...]...
+    $ cd python-sharelatex
+
+    $ # Make a virtual environment to avoid poluting your general installation
+    $ mkdir .venv
+    $ python -m venv .venv
+    $ source .venv/bin/activate
+    $ which pip
+    [...]/.venv/bin/pip
+
+    $ # Latest stable version
+    $ pip install sharelatex
+    $ pip install -r test-requirements.txt
+
+    $ # Local installation
+    $ pip install -e .
+
+In order to work on the documentation:
+
+.. code-block:: console
+    :caption: Compile the documentation
+
+    $ cd docs
+    ... make modification to the doc pages (.rst, see sphinx documentation tool)
+    $ make html
+    $ <browser> _build/index.html

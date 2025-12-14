@@ -39,7 +39,8 @@ specifying an option between ``gitlab`` and ``community`` respectively.
     - find the cookie manager (e.g. in most browsers, this is under the *"storage"* tab, in
       the "cookies" section),
     - find a cookie named ``overleaf.sid``, and copy to your clipboard its *value* field
-      (it should look like a long hash, containing alphanumeric caracters and special ones),
+      (it should look like a long hash starting with ``s%3A``, containing alphanumeric caracters
+      and special ones),
     - finaly, attempt to connect with the intended ``slatex`` command, specifying the ``cookie``
       option as the authentication method, and using the value of the cookie as the password.
 
