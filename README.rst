@@ -59,7 +59,7 @@ Quick examples
 Display the possible actions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`slatex` is a subcommand of git that calls the ``git-slatex`` programm shipped by this project.
+`slatex` is a subcommand of git that calls the ``git-slatex`` program shipped by this project.
 
 .. code:: bash
 
