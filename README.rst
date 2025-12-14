@@ -119,13 +119,10 @@ new push.
 Pull changes from sharelatex to local (like a git pull)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 .. code:: bash
 
     # Pull changes from sharelatex
     git slatex pull
-
-
 
 
 Create a remote project from a local git
@@ -139,12 +136,15 @@ Create a remote project from a local git
 To collaborate on this project
 ------------------------------
 
+General purpose instructions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. code-block:: console
     :caption: Install everything for local developpement of this package
 
     $ # Pull the most up-to-date version of the code
     $ git clone https://gitlab.inria.fr/sed-rennes/sharelatex/python-sharelatex
-    Fetching [...]...
+    Cloning [...]...
     $ cd python-sharelatex
 
     $ # Make a virtual environment to avoid poluting your general installation
@@ -161,7 +161,11 @@ To collaborate on this project
     $ # Local installation
     $ pip install -e .
 
-In order to work on the documentation:
+Documentation
+~~~~~~~~~~~~~
+
+In order to work on the documentation, follow the previous instructions and then compile
+with ``make``:
 
 .. code-block:: console
     :caption: Compile the documentation
