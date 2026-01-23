@@ -27,7 +27,9 @@ Installation
     # Development version
     git clone https://gitlab.inria.fr/sed-rennes/sharelatex/python-sharelatex
     cd python-sharelatex
-    pip install [-e] .
+    pip install .
+
+See at the end of this page for local installation for developpement purposes.
 
 Compatibility notes
 -------------------
@@ -59,7 +61,7 @@ Quick examples
 Display the possible actions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`slatex` is a subcommand of git that calls the ``git-slatex`` programm shipped by this project.
+`slatex` is a subcommand of git that calls the ``git-slatex`` program shipped by this project.
 
 .. code:: bash
 
@@ -117,13 +119,10 @@ new push.
 Pull changes from sharelatex to local (like a git pull)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 .. code:: bash
 
     # Pull changes from sharelatex
     git slatex pull
-
-
 
 
 Create a remote project from a local git
@@ -132,3 +131,46 @@ Create a remote project from a local git
 .. code:: bash
 
    git slatex new [OPTIONS] PROJECTNAME BASE_URL
+
+
+To collaborate on this project
+------------------------------
+
+General purpose instructions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: console
+    :caption: Install everything for local developpement of this package
+
+    $ # Pull the most up-to-date version of the code
+    $ git clone https://gitlab.inria.fr/sed-rennes/sharelatex/python-sharelatex
+    Cloning [...]...
+    $ cd python-sharelatex
+
+    $ # Make a virtual environment to avoid poluting your general installation
+    $ mkdir .venv
+    $ python -m venv .venv
+    $ source .venv/bin/activate
+    $ which pip
+    [...]/.venv/bin/pip
+
+    $ # Latest stable version
+    $ pip install sharelatex
+    $ pip install -r test-requirements.txt
+
+    $ # Local installation
+    $ pip install -e .
+
+Documentation
+~~~~~~~~~~~~~
+
+In order to work on the documentation, follow the previous instructions and then compile
+with ``make``:
+
+.. code-block:: console
+    :caption: Compile the documentation
+
+    $ cd docs
+    ... make modification to the doc pages (.rst, see sphinx documentation tool)
+    $ make html
+    $ <browser> _build/index.html
