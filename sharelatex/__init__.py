@@ -1322,3 +1322,16 @@ class SyncClient:
         r = self._delete(url, data=data, params=params, verify=self.verify)
         r.raise_for_status()
         return r
+
+    def rename(self, project_id: str, name: str) -> Any:
+        """Rename a project
+
+        Args:
+            project_id (str): The project id of the project to delete
+            name (str): The new project name
+        """
+        url = f"{self.base_url}/project/{project_id}/rename"
+        data = {"newProjectName": name, "_csrf": self.login_data["_csrf"]}
+        r = self._post(url, data=data, verify=self.verify)
+        r.raise_for_status()
+        return r
