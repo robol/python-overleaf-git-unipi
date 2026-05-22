@@ -455,6 +455,8 @@ class OverleafCookieAuthenticator(DefaultAuthenticator):
         Authenticate throw session cookie.
         Pass the content of ``overleaf.sid`` cookie as password
         parameter in SyncClient constructor
+        Warning : you need to call GET request before POST request
+        to retrieve CSRF token which is mandatory in POST request
         """
         self.login_url = urllib.parse.urljoin(base_url, login_path)
         self.username = username
@@ -771,7 +773,10 @@ class SyncClient:
         return r
 
     def _get(self, url: str, *args: Any, **kwargs: Any) -> requests.Response:
-        return self._request("GET", url, *args, **kwargs)
+        r = self._request("GET", url, *args, **kwargs)
+        if self.login_data['_csrf'] is None:
+            self.login_data['_csrf'] = get_csrf_Token(r.text)
+        return r
 
     def _post(self, url: str, *args: Any, **kwargs: Any) -> requests.Response:
         return self._request("POST", url, *args, **kwargs)
