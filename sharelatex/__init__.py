@@ -774,8 +774,8 @@ class SyncClient:
 
     def _get(self, url: str, *args: Any, **kwargs: Any) -> requests.Response:
         r = self._request("GET", url, *args, **kwargs)
-        if self.login_data['_csrf'] is None:
-            self.login_data['_csrf'] = get_csrf_Token(r.text)
+        if self.login_data["_csrf"] is None:
+            self.login_data["_csrf"] = get_csrf_Token(r.text)
         return r
 
     def _post(self, url: str, *args: Any, **kwargs: Any) -> requests.Response:
