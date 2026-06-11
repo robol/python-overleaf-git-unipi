@@ -5,6 +5,7 @@ import os
 import sys
 import tempfile
 import time
+import urllib.parse
 from functools import wraps
 from pathlib import Path
 from typing import (
@@ -99,6 +100,8 @@ class RepoNotCleanError(SharelatexError):
 
 def set_log_level(verbose: int = 0) -> None:
     """set log level from integer value"""
+    if verbose is None:
+        verbose = 0
     log_levels = (logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG)
     logger.setLevel(log_levels[verbose])
 
@@ -921,9 +924,9 @@ def pull(
 
 
 @cli.command()
-@click.argument(
-    "projet_url", default=""
-)  # , help="The project url (https://sharelatex.irisa.fr/1234567890)")
+@click.argument("projet_url", default="")
+# , help="The project url (https://sharelatex.irisa.fr/1234567890
+#   or https://sharelatex.irisa.fr/1234567890/invite/token/abcd12345 for invitation)")
 @click.argument("directory", default="", type=click.Path(file_okay=False))
 @click.option(
     "--https-cert-check/--no-https-cert-check",
@@ -961,20 +964,37 @@ def clone(
     config.
 
     The project URL must not be an anonymous project URL:
-    Expected project URL format is http[s]://base_server_address/project/<project_id>
+    Expected project URL format is :
+      - http[s]://base_server_address/project/<project_id>
+    or for invitation sended by email:
+      - http[s]://base_server_address/project/<project_id>/invite/token/<token>
 
     It works as follow:
-
-        1. Download and unzip the remote project in the target directory\n
-        2. Initialize a fresh git repository\n
-        3. Create an extra ``{SYNC_BRANCH}`` to keep track of the remote versions of
+        1. join project (if invited)
+        2. Download and unzip the remote project in the target directory\n
+        3. Initialize a fresh git repository\n
+        4. Create an extra ``{SYNC_BRANCH}`` to keep track of the remote versions of
            the project. This branch must not be updated manually.
     """
     set_log_level(verbose)
-    # TODO : robust parse regexp
-    slashparts = projet_url.split("/")
-    project_id = slashparts[-1]
-    base_url = "/".join(slashparts[:-2])
+    s = urllib.parse.urlsplit(projet_url)
+    base_url = f"{s.scheme}://{s.netloc}"
+    parts = s.path.split("/")
+    token = None
+    # check if URL is an invitation (received by mail)
+    if "invite" in parts:
+        try:
+            token_idx = parts.index("token")
+            token = parts[token_idx + 1]
+        except (ValueError, IndexError) as exc:
+            raise ValueError(URL_MALFORMED_ERROR_MESSAGE) from exc
+    try:
+        proj_idx = parts.index("project")
+        project_id = parts[proj_idx + 1]
+    except (ValueError, IndexError) as exc:
+        raise ValueError(
+            URL_MALFORMED_ERROR_MESSAGE + URL_SEEMS_TO_BE_ANONYMOUS_URL
+        ) from exc
     if base_url == "":
         if "project" not in project_id:
             raise Exception(URL_MALFORMED_ERROR_MESSAGE + URL_SEEMS_TO_BE_ANONYMOUS_URL)
@@ -1009,6 +1029,9 @@ def clone(
         https_cert_check,
         save_password,
     )
+    if token:
+        # join invited project before download
+        client.join(project_id, token)
 
     if whole_project_download:
         client.download_project(project_id, path=str(directory_as_path))
