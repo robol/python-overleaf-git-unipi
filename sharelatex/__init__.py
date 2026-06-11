@@ -1315,6 +1315,29 @@ class SyncClient:
         response = r.json()
         return response
 
+    def join(self, project_id: str, token: str) -> Any:
+        """
+        join project from a invitation URL that looks like:
+            <base_url>/project/<project_id>/invite/token/<token>
+        Args:
+            project_id (str) : project id to join
+            token (str) : token associated with the invitation (sended by email)
+        Returns:
+            project_id (str) : project id of joined project
+        Raises:
+             Exception if something is wrong when join project
+        """
+        url = f"{self.base_url}/project/{project_id}/invite/token/{token}/accept"
+
+        data = {
+            "_csrf": self.login_data["_csrf"],
+            "token": token,
+        }
+        r = self._post(url, data=data, verify=self.verify)
+        r.raise_for_status()
+
+        return project_id
+
     def delete(self, project_id: str, *, forever: bool = False) -> Any:
         """Delete a project for the current user.
 
