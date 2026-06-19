@@ -99,7 +99,8 @@ class RepoNotCleanError(SharelatexError):
         """
         return (
             f"\n---\n{MESSAGE_REPO_ISNT_CLEAN}. "
-            "There mustn't be any untracked/uncommitted files here."
+            "There mustn't be any untracked/uncommitted files here.\n"
+            "You may want to run git clean -fd, that will REMOVE ALL UNTRACKED FILES."
         )
 
 
