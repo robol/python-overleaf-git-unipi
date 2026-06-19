@@ -674,7 +674,7 @@ class SyncClient:
         expire_time = 1000  # seconds
         update_need = False
 
-        cache_dir = Path(user_data_dir("python-sharelatex"))
+        cache_dir = Path(user_data_dir("python-overleaf-git-unipi"))
         cache_dir.mkdir(parents=True, exist_ok=True)
         datafile = cache_dir / Path("session_cache")
         if datafile.is_file():

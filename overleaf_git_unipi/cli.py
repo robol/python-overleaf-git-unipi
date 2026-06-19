@@ -111,8 +111,8 @@ def set_log_level(verbose: int = 0) -> None:
     logger.setLevel(log_levels[verbose])
 
 
-SLATEX_SECTION = "slatex"
-SYNC_BRANCH = "__remote__sharelatex__"
+SLATEX_SECTION = "overleaf"
+SYNC_BRANCH = "__remote__overleaf_git_unipi__"
 
 
 def _commit_message(action: str) -> str:
