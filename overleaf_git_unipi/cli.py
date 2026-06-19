@@ -984,87 +984,6 @@ def _pull(repo: Repo, client: SyncClient, project_id: str, git_branch: str) -> N
     git.merge(git_branch)
 
 
-@cli.command()
-@click.argument("project_id", default="")
-@authentication_options
-@log_options
-def compile(
-    project_id: str,
-    auth_type: str,
-    username: Optional[str],
-    password: Optional[str],
-    save_password: Optional[bool],
-    ignore_saved_user_info: bool,
-    verbose: int,
-) -> None:
-    """
-    Compile the remote version of a project
-    """
-    set_log_level(verbose)
-    repo = Repo()
-    base_url, project_id, https_cert_check = refresh_project_information(repo)
-    auth_type, username, password = refresh_account_information(
-        repo, auth_type, username, password, save_password, ignore_saved_user_info
-    )
-    client = exit_on_error(getClient, AUTHENTICATION_FAILED)(
-        repo,
-        base_url,
-        auth_type,
-        username,
-        password,
-        https_cert_check,
-        save_password,
-    )
-
-    response = client.compile(project_id)
-    logger.debug(response)
-
-
-@cli.command()
-@click.argument("email", default="")
-@click.option("--project_id", default=None)
-@click.option(
-    "--can-edit/--read-only",
-    default=True,
-    help="""Authorize user to edit the project or not""",
-)
-@authentication_options
-@log_options
-def share(
-    project_id: str,
-    email: str,
-    can_edit: bool,
-    auth_type: str,
-    username: Optional[str],
-    password: Optional[str],
-    save_password: Optional[bool],
-    ignore_saved_user_info: bool,
-    verbose: int,
-) -> None:
-    """
-    Send an invitation to share (edit/view) a project
-    """
-    set_log_level(verbose)
-    repo = Repo()
-    base_url, project_id, https_cert_check = refresh_project_information(
-        repo, project_id=project_id
-    )
-    auth_type, username, password = refresh_account_information(
-        repo, auth_type, username, password, save_password, ignore_saved_user_info
-    )
-    client = exit_on_error(getClient, AUTHENTICATION_FAILED)(
-        repo,
-        base_url,
-        auth_type,
-        username,
-        password,
-        https_cert_check,
-        save_password,
-    )
-
-    response = client.share(project_id, email, can_edit)
-    logger.debug(response)
-
 
 @cli.command(
     help=f"""Pull the files from sharelatex.
@@ -1143,8 +1062,7 @@ def clone(
     verbose: int,
     git_branch: str,
 ) -> None:
-    f"""
-    Get (clone) the files from sharelatex project URL and create a local git depot.
+    f"""Get (clone) the files from an Overleaf project URL and create a local git repository
 
     The optional target directory will be created if it doesn't exist. The command
     fails if it already exists. Connection information can be saved in the local git

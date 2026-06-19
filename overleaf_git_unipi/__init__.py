@@ -1220,30 +1220,6 @@ class SyncClient:
         response = r.json()
         return response
 
-    def compile(self, project_id: str) -> Any:
-        """Trigger a remote compilation.
-
-        Note that this is run against the remote version not the local one.
-
-        Args:
-            project_id (str): The project id of the project to compile
-
-        Returns:
-            response (dict) status of the request as returned by sharelatex
-
-        Raises:
-             Exception if something is wrong with the compilation
-        """
-        url = f"{self.base_url}/project/{project_id}/compile"
-
-        data = {"_csrf": self.login_data["_csrf"]}
-        r = self._post(url, data=data, verify=self.verify)
-        r.raise_for_status()
-        response = r.json()
-        if response["status"] != "success":
-            raise CompilationError(response)
-        return response
-
     def update_project_settings(
         self, project_id: str, **settings: Any
     ) -> requests.Response:
