@@ -111,8 +111,8 @@ def set_logger(new_logger: logging.Logger) -> None:
     logger = new_logger
 
 
-BASE_URL = "https://overleaf.irisa.fr"
-USER_AGENT = f"python-sharelatex {__version__}"
+BASE_URL = "https://overleaf.unipi.it"
+USER_AGENT = f"python-overleaf-git-unipi {__version__}"
 
 
 class SharelatexError(Exception):

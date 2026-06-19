@@ -31,7 +31,7 @@ import keyring
 from git import Repo
 from git.config import cp
 
-from sharelatex import (
+from overleaf_git_unipi import (
     AUTH_DICT,
     OverleafCookieAuthenticator,
     ProjectData,
@@ -116,7 +116,7 @@ SYNC_BRANCH = "__remote__sharelatex__"
 
 
 def _commit_message(action: str) -> str:
-    commit_message_base = "python-sharelatex "
+    commit_message_base = "python-overleaf-git-unipi: "
     return commit_message_base + action
 
 
@@ -471,7 +471,7 @@ def _capture_cookie_from_browser(base_url: str) -> Optional[str]:
         return None
 
     with tempfile.TemporaryDirectory(
-        prefix="python-sharelatex-browser-",
+        prefix="python-overleaf-git-unipi-browser-",
         ignore_cleanup_errors=True,
     ) as user_data:
         try:
