@@ -1,4 +1,4 @@
-Python-overleaf-git-unipi is a small project derived from [Python-sharelatex](https://gitlab.inria.fr/sed-rennes/sharelatex).
+Python-overleaf-git-unipi is a small project derived from [Python-sharelatex](https://gitlab.inria.fr/sed-rennes/sharelatex). It has been slightly modified and adapted to suit the need for the local installation at https://overleaf.unipi.it, but should work against any Overleaf instance. 
 
 ## Installation
 
@@ -16,13 +16,13 @@ The script can be run multiple times to update the `git-overleaf` module.
 Clone an Overleaf project by passing its project URL:
 
 ```sh
-git overleaf clone https://www.overleaf.com/project/<project-id>
+git overleaf clone https://overleaf.unipi.it/project/<project-id>
 ```
 
 You can also choose the local directory name:
 
 ```sh
-git overleaf clone https://www.overleaf.com/project/<project-id> my-paper
+git overleaf clone https://overleaf.unipi.it/project/<project-id> my-paper
 ```
 
 Inside the cloned project directory, pull changes from Overleaf with:
