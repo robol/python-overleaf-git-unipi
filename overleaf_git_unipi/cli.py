@@ -1265,7 +1265,6 @@ def _push(
 @cli.command()
 @click.option("--force", is_flag=True, help="Force push", default=False)
 @_GIT_BRANCH_OPTION
-@click.option("--force", is_flag=True, help="Force push")
 @authentication_options
 @log_options
 @handle_exception(RepoNotCleanError)
