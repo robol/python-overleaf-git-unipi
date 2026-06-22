@@ -24,8 +24,14 @@ fi
 
 "${VENV_DIR}/bin/python" -m pip install --upgrade pip
 
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-if [ -d "${SCRIPT_DIR}/overleaf_git_unipi" ] &&
+SCRIPT_PATH="${BASH_SOURCE[0]:-}"
+SCRIPT_DIR=""
+if [ -n "${SCRIPT_PATH}" ]; then
+    SCRIPT_DIR="$(cd -- "$(dirname -- "${SCRIPT_PATH}")" && pwd)"
+fi
+
+if [ -n "${SCRIPT_DIR}" ] &&
+    [ -d "${SCRIPT_DIR}/overleaf_git_unipi" ] &&
     { [ -f "${SCRIPT_DIR}/pyproject.toml" ] || [ -f "${SCRIPT_DIR}/setup.py" ]; }; then
     "${VENV_DIR}/bin/python" -m pip install --upgrade "${SCRIPT_DIR}"
 else
