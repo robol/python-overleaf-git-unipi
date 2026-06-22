@@ -31,6 +31,8 @@ import keyring
 from git import Repo
 from git.config import cp
 
+from overleaf_git_unipi.browser_login import login as browser_login
+
 from overleaf_git_unipi import (
     AUTH_DICT,
     OverleafCookieAuthenticator,
@@ -349,174 +351,13 @@ def refresh_project_information(
     )
 
 
-def _get_browser_executable() -> Optional[str]:
-    for executable in (
-        "google-chrome",
-        "google-chrome-stable",
-        "chromium",
-        "chromium-browser",
-        "chrome",
-        "microsoft-edge",
-        "msedge",
-        "brave-browser",
-        "brave",
-    ):
-        path = shutil.which(executable)
-        if path is not None:
-            return path
-    return None
-
-
-def _read_json_url(url: str) -> Any:
-    with urllib.request.urlopen(url, timeout=2) as response:
-        return json.loads(response.read().decode("utf-8"))
-
-
-def _wait_for_devtools_port(user_data_dir: str) -> int:
-    devtools_file = Path(user_data_dir) / "DevToolsActivePort"
-    deadline = time.time() + 10
-
-    while time.time() < deadline:
-        if devtools_file.is_file():
-            lines = devtools_file.read_text().splitlines()
-            if lines:
-                return int(lines[0])
-        time.sleep(0.1)
-
-    raise RuntimeError("Timed out while waiting for the browser debugging port.")
-
-
-def _get_project_url(base_url: str) -> str:
-    return urllib.parse.urljoin(base_url.rstrip("/") + "/", "project")
-
-
-def _is_project_url(base_url: str, current_url: str) -> bool:
-    project_url = _get_project_url(base_url)
-    normalized_project_url = project_url.rstrip("/")
-    normalized_current_url = current_url.rstrip("/")
-    return (
-        normalized_current_url == normalized_project_url
-        or normalized_current_url.startswith(normalized_project_url + "/")
-    )
-
-
-def _get_devtools_page(port: int) -> Tuple[str, str]:
-    targets = _read_json_url(f"http://127.0.0.1:{port}/json/list")
-    for target in targets:
-        if target.get("type") == "page" and target.get("webSocketDebuggerUrl"):
-            return cast(str, target["webSocketDebuggerUrl"]), cast(str, target["url"])
-
-    raise RuntimeError("Unable to find a browser page to inspect.")
-
-
-def _get_cookie_from_devtools(port: int, base_url: str) -> Tuple[Optional[str], str]:
-    try:
-        import websocket
-    except ImportError:
-        logger.info("Unable to inspect browser cookies: websocket-client is missing.")
-        return None, ""
-
-    try:
-        ws_url, current_url = _get_devtools_page(port)
-        socket = websocket.create_connection(
-            ws_url,
-            timeout=2,
-            suppress_origin=True,
-        )
-    except Exception as e:
-        logger.debug(f"Unable to connect to browser devtools: {e}")
-        return None, ""
-
-    try:
-        commands = [
-            {"id": 1, "method": "Network.enable"},
-            {"id": 2, "method": "Network.getAllCookies"},
-            {
-                "id": 3,
-                "method": "Network.getCookies",
-                "params": {"urls": [base_url]},
-            },
-            {"id": 4, "method": "Storage.getCookies"},
-        ]
-        pending = {command["id"] for command in commands}
-
-        for command in commands:
-            socket.send(json.dumps(command))
-
-        while pending:
-            message = json.loads(socket.recv())
-            message_id = message.get("id")
-            if message_id not in pending:
-                continue
-
-            pending.remove(message_id)
-            if "error" in message:
-                logger.debug(f"Browser cookie command failed: {message['error']}")
-                continue
-
-            for cookie in message.get("result", {}).get("cookies", []):
-                if cookie.get("name") == "overleaf.sid":
-                    return cast(str, cookie.get("value")), current_url
-
-        return None, current_url
-    except Exception as e:
-        logger.debug(f"Unable to read browser cookies from devtools: {e}")
-        return None, current_url
-    finally:
-        socket.close()
-
-
 def _capture_cookie_from_browser(base_url: str) -> Optional[str]:
-    browser = _get_browser_executable()
-    if browser is None:
+    output = browser_login()
+    try:
+        return output['cookie']['overleaf.sid']
+    except Exception as e:
+        logger.debug(f"could not capture cookie from browser: {e}")
         return None
-
-    with tempfile.TemporaryDirectory(
-        prefix="python-overleaf-git-unipi-browser-",
-        ignore_cleanup_errors=True,
-    ) as user_data:
-        try:
-            process = subprocess.Popen(
-                [
-                    browser,
-                    "--new-window",
-                    "--no-first-run",
-                    "--remote-debugging-port=0",
-                    "--remote-allow-origins=*",
-                    f"--user-data-dir={user_data}",
-                    base_url,
-                ],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-            )
-        except OSError as e:
-            logger.debug(f"Unable to launch browser {browser}: {e}")
-            return None
-
-        try:
-            port = _wait_for_devtools_port(user_data)
-            click.echo(
-                "Browser window opened. Log in there; waiting for the project page..."
-            )
-            deadline = time.time() + 180
-
-            while time.time() < deadline:
-                cookie, current_url = _get_cookie_from_devtools(port, base_url)
-                if cookie and _is_project_url(base_url, current_url):
-                    return cookie
-                time.sleep(1)
-        except Exception as e:
-            logger.debug(f"Unable to capture cookie from browser: {e}")
-            return None
-        finally:
-            process.terminate()
-            try:
-                process.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                process.kill()
-                process.wait()
-
-    return None
 
 
 def _prompt_for_cookie(base_url: str) -> str:
