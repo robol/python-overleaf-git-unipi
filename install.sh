@@ -4,8 +4,8 @@
 # update the git-overleaf script.
 #
 # To run this script paste
-#  
-#  curl https://github.com/robol/git-overleaf-unipi/raw/master/install.sh | bash"
+#
+#  curl https://raw.githubusercontent.com/robol/python-overleaf-git-unipi/refs/heads/main/install.sh | bash
 #
 
 set -euo pipefail
