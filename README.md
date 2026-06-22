@@ -1,5 +1,7 @@
 Python-overleaf-git-unipi is a small project derived from [Python-sharelatex](https://gitlab.inria.fr/sed-rennes/sharelatex). It has been slightly modified and adapted to suit the need for the local installation at https://overleaf.unipi.it, but should work against any Overleaf instance. 
 
+See [FAQ.md](FAQ.md) for answers to common installation and synchronization questions.
+
 ## Installation
 
 The recommended way to install or update `git-overleaf` is to run the installer directly from GitHub:
