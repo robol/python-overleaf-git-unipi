@@ -9,3 +9,4 @@ curl https://raw.githubusercontent.com/robol/python-overleaf-git-unipi/refs/head
 ```
 
 The script creates a virtual environment under `~/.local/share/python-overleaf-git-unipi`, installs the package there, and adds `git-overleaf` to your PATH through `~/.profile`.
+The script can be run multiple times to update the `git-overleaf` module.
