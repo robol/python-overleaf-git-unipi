@@ -10,7 +10,7 @@ The recommended way to install or update `git-overleaf` is to run the installer 
 curl https://raw.githubusercontent.com/robol/python-overleaf-git-unipi/refs/heads/main/install.sh | bash
 ```
 
-The script creates a virtual environment under `~/.local/share/python-overleaf-git-unipi`, installs the package there, and adds `git-overleaf` to your PATH through `~/.profile`.
+The script requires Python 3.9 or newer, creates a virtual environment under `~/.local/share/python-overleaf-git-unipi`, and installs the package there. It adds `git-overleaf` to your PATH through the startup file for your shell (`~/.zshrc` for the default macOS shell).
 The script can be run multiple times to update the `git-overleaf` module.
 
 ## Quick usage

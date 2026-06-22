@@ -18,7 +18,7 @@ Remove the installation directory:
 rm -rf ~/.local/share/python-overleaf-git-unipi
 ```
 
-Then edit `~/.profile` and remove the lines added by the installer:
+Then edit your shell startup file and remove the lines added by the installer. This is normally `~/.zshrc` on macOS, `~/.profile` on Linux with Bash, or `~/.bash_profile` on macOS with Bash:
 
 ```sh
 # Add git-overleaf to PATH.
@@ -27,22 +27,21 @@ export PATH="$HOME/.local/share/python-overleaf-git-unipi/bin:$PATH"
 
 Open a new shell, or remove the directory from `PATH` in the current shell before continuing.
 
-## What if my `.bash_profile` does not source `.profile`?
+## Where does the installer add `git-overleaf` to `PATH`?
 
-The installer adds `git-overleaf` to `PATH` in `~/.profile`. Some Bash login shells read `~/.bash_profile` instead and do not load `~/.profile` automatically.
+The installer uses `~/.zshrc` for Zsh, `~/.bash_profile` for Bash on macOS, and `~/.profile` for Bash on other systems. Set the `PROFILE` environment variable to use a different file.
 
-If `git overleaf` is not found after restarting your shell, add this to `~/.bash_profile`:
+For example:
 
 ```sh
-if [ -f ~/.profile ]; then
-    . ~/.profile
-fi
+curl https://raw.githubusercontent.com/robol/python-overleaf-git-unipi/refs/heads/main/install.sh |
+    PROFILE="$HOME/.profile" bash
 ```
 
-Then open a new shell, or run:
+If you use another shell, add the installation directory to its PATH configuration:
 
 ```sh
-. ~/.profile
+export PATH="$HOME/.local/share/python-overleaf-git-unipi/bin:$PATH"
 ```
 
 ## How do I clone an Overleaf project?

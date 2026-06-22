@@ -1,0 +1,54 @@
+name: Test installer
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            login-shell: /bin/bash
+            profile: .profile
+          - os: macos-latest
+            login-shell: /bin/zsh
+            profile: .zshrc
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install and verify
+        shell: bash
+        env:
+          LOGIN_SHELL: ${{ matrix.login-shell }}
+          EXPECTED_PROFILE: ${{ matrix.profile }}
+        run: |
+          set -euo pipefail
+
+          export HOME="${RUNNER_TEMP}/install-home"
+          export INSTALL_DIR="${HOME}/.local/share/python-overleaf-git-unipi"
+          export SHELL="${LOGIN_SHELL}"
+          mkdir -p "${HOME}"
+
+          bash install.sh
+          bash install.sh
+
+          test -x "${INSTALL_DIR}/venv/bin/python"
+          test -L "${INSTALL_DIR}/bin/git-overleaf"
+          "${INSTALL_DIR}/bin/git-overleaf" --help >/dev/null
+
+          test -f "${HOME}/${EXPECTED_PROFILE}"
+          test "$(grep -Fc "${INSTALL_DIR}/bin" "${HOME}/${EXPECTED_PROFILE}")" -eq 1
