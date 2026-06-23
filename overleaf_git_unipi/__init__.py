@@ -38,6 +38,11 @@ try:
 except ImportError:
     from typing_extensions import Literal, TypedDict  # type: ignore
 
+logging.basicConfig(
+    level = logging.INFO, 
+    format = "[overleaf-git] %(message)s"
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -101,14 +106,6 @@ class UpdateDatum(TypedDict):
     """
 
     updates: Sequence[Update]
-
-
-def set_logger(new_logger: logging.Logger) -> None:
-    """
-    set logger.
-    """
-    global logger
-    logger = new_logger
 
 
 BASE_URL = "https://overleaf.unipi.it"

@@ -34,7 +34,6 @@ from overleaf_git_unipi import (
     SyncClient,
     UpdateDatum,
     get_authenticator_class,
-    set_logger,
     walk_folders,
     walk_project_data,
 )
@@ -50,11 +49,6 @@ URL_SEEMS_TO_BE_ANONYMOUS_URL = """, project_url seems to be an anonymous URL:
 AUTHENTICATION_FAILED = "Unable to authenticate, exiting"
 
 logger = logging.getLogger(__name__)
-handler = logging.StreamHandler()
-logger.setLevel(logging.INFO)
-logger.addHandler(handler)
-
-set_logger(logger)
 
 
 class RemoteItem(TypedDict):
@@ -947,6 +941,11 @@ def clone(
         directory_as_path = Path(directory_as_path, project_id)
     else:
         directory_as_path = Path(directory)
+
+    if os.path.exists(directory_as_path):
+        logger.error(f"Directory {directory_as_path} already exists, exiting. Please remove it or choose another directory.")
+        sys.exit(1)
+
     directory_as_path.mkdir(parents=True, exist_ok=False)
 
     repo = get_clean_repo(path=directory_as_path)
