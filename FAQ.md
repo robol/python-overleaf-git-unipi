@@ -90,3 +90,10 @@ git clean -fd
 ```
 
 Be careful: `git clean -fd` permanently deletes untracked local files and directories.
+
+## What is the relation between this project and python-sharelatex, or overleaf-sync?
+
+This project has been pieced together by a fork of [python-sharelatex](https://gitlab.inria.fr/sed-rennes/sharelatex), 
+and [overleaf-sync](https://github.com/moritzgloeckl/overleaf-sync). The latter has been used only for the browser 
+login form, to automate the cookie authentication method. The license of this project is GPL-3, which is compatible
+with both licenses of these two projects. 
