@@ -342,7 +342,7 @@ def refresh_project_information(
 def _capture_cookie_from_browser(base_url: str) -> Optional[str]:
     from overleaf_git_unipi.browser_login import login as browser_login
 
-    output = browser_login()
+    output = browser_login(base_url)
     try:
         return output['cookie']['overleaf.sid']
     except Exception as e:

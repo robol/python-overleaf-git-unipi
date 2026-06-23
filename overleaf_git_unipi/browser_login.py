@@ -38,11 +38,11 @@ class OlBrowserLoginWindow(QMainWindow):
     Opens a browser window to securely login the user and returns relevant login data.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, base_url, *args, **kwargs):
         super(OlBrowserLoginWindow, self).__init__(*args, **kwargs)
 
         self.webview = QWebEngineView()
-        self._base_url = kwargs.get("base_url", "https://overleaf.unipi.it/")
+        self._base_url = base_url
 
         self._cookies = {}
         self._csrf = ""
@@ -58,7 +58,7 @@ class OlBrowserLoginWindow(QMainWindow):
 
         webpage = QuietWebEnginePage(self.profile, self)
         self.webview.setPage(webpage)
-        self.webview.load(QUrl.fromUserInput(self._base_url + "login"))
+        self.webview.load(QUrl.fromUserInput(self._base_url + "/login"))
         self.webview.loadFinished.connect(self.handle_load_finished)
 
         self.setCentralWidget(self.webview)
@@ -70,7 +70,7 @@ class OlBrowserLoginWindow(QMainWindow):
             self._login_success = True
             QCoreApplication.quit()
 
-        if self.webview.url().toString() == (self._base_url + "project"):
+        if self.webview.url().toString() == (self._base_url + "/project"):
             self.webview.page().runJavaScript(
                 JAVASCRIPT_CSRF_EXTRACTOR, 0, callback
             )
@@ -93,14 +93,14 @@ class OlBrowserLoginWindow(QMainWindow):
         return self._login_success
 
 
-def login():
+def login(base_url):
     from PySide6.QtCore import QLoggingCategory
     QLoggingCategory.setFilterRules('''\
     qt.webenginecontext.info=false
     ''')
 
     app = QApplication([])
-    ol_browser_login_window = OlBrowserLoginWindow()
+    ol_browser_login_window = OlBrowserLoginWindow(base_url)
     ol_browser_login_window.show()
     app.exec()
 
