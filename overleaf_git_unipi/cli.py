@@ -31,8 +31,6 @@ import keyring
 from git import Repo
 from git.config import cp
 
-from overleaf_git_unipi.browser_login import login as browser_login
-
 from overleaf_git_unipi import (
     AUTH_DICT,
     OverleafCookieAuthenticator,
@@ -352,6 +350,8 @@ def refresh_project_information(
 
 
 def _capture_cookie_from_browser(base_url: str) -> Optional[str]:
+    from overleaf_git_unipi.browser_login import login as browser_login
+
     output = browser_login()
     try:
         return output['cookie']['overleaf.sid']
