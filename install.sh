@@ -120,7 +120,7 @@ fi
 
 printf 'git-overleaf installed in %s\n' "${INSTALL_DIR}"
 if [ -n "${PROFILE}" ]; then
-    printf 'Restart your shell or run: source "%s"\n' "${PROFILE}"
+    printf 'Restart your login shell or run: source "%s"\n' "${PROFILE}"
 else
     printf 'Add this directory to your PATH: %s\n' "${BIN_DIR}"
 fi
