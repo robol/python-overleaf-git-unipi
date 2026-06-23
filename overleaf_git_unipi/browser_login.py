@@ -19,6 +19,18 @@ JAVASCRIPT_CSRF_EXTRACTOR = "document.getElementsByName('ol-csrfToken')[0].conte
 # Name of the cookies we want to extract
 COOKIE_NAMES = ["overleaf.sid"]
 
+class QuietWebEnginePage(QWebEnginePage):
+    def javaScriptConsoleMessage(self, level, message, line_number, source_id):
+        ignored = (
+            "Error with Permissions-Policy header: Unrecognized feature"
+            in message
+        )
+        if ignored:
+            return
+
+        super().javaScriptConsoleMessage(
+            level, message, line_number, source_id
+        )
 
 class OlBrowserLoginWindow(QMainWindow):
     """
@@ -44,7 +56,7 @@ class OlBrowserLoginWindow(QMainWindow):
 
         self.profile.settings().setAttribute(QWebEngineSettings.JavascriptEnabled, True)
 
-        webpage = QWebEnginePage(self.profile, self)
+        webpage = QuietWebEnginePage(self.profile, self)
         self.webview.setPage(webpage)
         self.webview.load(QUrl.fromUserInput(self._base_url + "login"))
         self.webview.loadFinished.connect(self.handle_load_finished)
